@@ -131,3 +131,46 @@ else:
     print("A sua opção de transporte resultou em: 🔴 Baixa Sustentabilidade 🔴")
 
 print("PROGRAMA ENCERRADO!")
+
+import mysql.connector #importando bd
+
+def obtemConexao(servidor, usuario, senha, bd): #conectando bd
+    if obtemConexao.conexao==None:
+        obtemConexao.conexao=mysql.connector.connect(host=f"{BD-ACD}",\
+                                                     user=f"{BD240225249}",\
+                                                     password=f"{Jjzly3}",\
+                                                     database=f"{BD240225249}")
+        return obtemConexao.conexao
+    obtemConexao.conexao=None
+
+def insercao_registro(nome,data_formatada,L_de_agua,kwh,kg_de_residuos,porcentagem_de_residuos,transporte): #inserção de dados
+    comando=f"insert into registros (nome,data,litros_agua,kwh_energia,kg_residuos,porcentagem_reciclada,transporte) values ('{nome}',{data_formatada},{L_de_agua},{kwh},{kg_de_residuos},{porcentagem_de_residuos},'{transporte}')"
+    conexao=obtemConexao("BD-ACD","BD240225249","Jjzly3","BD240225249")
+    cursor=conexao.cursor()
+    cursor.execute(comando)
+    conexao.commit()
+
+def selecao_de_aluno(ra): # consulta específica
+    comando=f"select * from registros where nome=(nome)"
+    conexao=obtemConexao("BD-ACD","BD240225249","Jjzly3","BD240225249")
+    cursor=conexao.cursor()
+    cursor.execute(comando)
+    linhas=cursor.fetchall()
+    if linhas==[]: return None
+    return linhas [0]
+
+def selecao_de_alunos( ): #consulta geral
+    comando=("select * from registros")
+    conexao=obtemConexao("BD-ACD","BD240225249","Jjzly3","BD240225249")
+    cursor=conexao.cursor()
+    cursor.execute(comando)
+    linhas=cursor.fetchall()
+    return linhas
+
+def fechaConexao(): #encerrar conexão
+    conexao=obtemConexao("BD-ACD","BD240225249","Jjzly3","BD240225249")
+    cursor=conexao.cursor()
+    cursor.close()
+    conexao.close()
+
+fechaConexao()
