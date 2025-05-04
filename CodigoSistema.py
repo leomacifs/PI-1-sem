@@ -1,40 +1,22 @@
 print("PROGRAMA PARA CALCULAR SUSTENTABILIDADE PESSOAL")
 
+from datetime import datetime
 digitou_corretamente=False
 while not digitou_corretamente:
-    try:       #QUAL O DIA
-        dia=int(input("Digite o dia atual: "))
-    except ValueError:
-        print("A data deve ser numérica! Tente novamente.")   
-    else:
-        if dia<1 or dia>31:
-            print("Você deve selecionar entre os dias de 1 a 31, tente novamente.")
-        else: 
-            digitou_corretamente=True    
+    # Solicita a data ao usuário
+    data_usuario = input("Digite a data atual (no formato dd/mm/aaaa): ")
 
-digitou_corretamente=False
-while not digitou_corretamente:
-    try:    # QUAL O MÊS
-        mes=int(input("Digite o mês atual: "))
+    # Tenta converter a entrada para o formato correto
+    try:
+        # Verifica se a data está no formato correto
+        data_formatada = datetime.strptime(data_usuario, "%d/%m/%Y").strftime("%d/%m/%Y")
+        print("Data formatada:", data_formatada)
+        break  # Sai do laço se a data for válida
     except ValueError:
-        print("A data deve ser numérica! Tente novamente.")   
-    else:
-        if mes<1 or mes>12:
-            print("Você deve selecionar entre os mêses de 1 a 12, tente novamente.")
-        else: 
-            digitou_corretamente=True
-
-digitou_corretamente=False
-while not digitou_corretamente:
-    try:    # QUAL O ANO
-        ano=int(input("Digite o ano atual: "))
-    except ValueError:
-        print("A data deve ser numérica! Tente novamente.")   
-    else:
-        if ano<2025:
-            print("Você deve selecionar a partir do ano de 2025! Tente novamente.")
-        else: 
-            digitou_corretamente=True   
+        # Se o formato estiver errado, avisa o usuário e pede novamente
+        print("Formato de data inválido! Por favor, use o formato dd/mm/aaaa.")
+    else: 
+            digitou_corretamente=True     
 
 digitou_corretamente=False
 while not digitou_corretamente:
