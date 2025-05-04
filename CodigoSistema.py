@@ -21,7 +21,7 @@ while not digitou_corretamente:
 digitou_corretamente=False
 while not digitou_corretamente:
     try:    # LITROS DE ÁGUA
-        L_de_agua=float(input("Quantos litros de água foram consumidos hoje? "))
+        L_de_agua=float(input("Quantos litros de água foram consumidos hoje? ").replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente!")
     else:
@@ -33,7 +33,7 @@ while not digitou_corretamente:
 digitou_corretamente=False
 while not digitou_corretamente:
     try:    # ENERGIA ELÉTRICA
-        kwh=float(input("Quanto kWh de energia elétrica você consumiu hoje?"))
+        kwh=float(input("Quanto kWh de energia elétrica você consumiu hoje?").replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente.")
     else:
@@ -45,7 +45,7 @@ while not digitou_corretamente:
 digitou_corretamente=False
 while not digitou_corretamente:
     try:      # KG DE RESÍDUOS
-        kg_de_residuos=float(input("Quantos kg de resíduos não recicláveis você gerou hoje?"))
+        kg_de_residuos=float(input("Quantos kg de resíduos não recicláveis você gerou hoje?").replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente!")
     else:
@@ -57,7 +57,7 @@ while not digitou_corretamente:
 digitou_corretamente=False
 while not digitou_corretamente:
     try:      #  % DE RESIDUOS
-        porcentagem_de_residuos=float(input("Qual a porcentagem de resíduos reciclados no total?" ))
+        porcentagem_de_residuos=float(input("Qual a porcentagem de resíduos reciclados no total?" ).replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente!")
     else:
