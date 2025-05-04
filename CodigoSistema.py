@@ -1,5 +1,8 @@
 print("PROGRAMA PARA CALCULAR SUSTENTABILIDADE PESSOAL")
 
+#Solicita nome do usuário
+nome=input("Digite o seu nome: ")
+
 from datetime import datetime
 digitou_corretamente=False
 while not digitou_corretamente:
