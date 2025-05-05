@@ -1,45 +1,68 @@
+import mysql.connector
+from datetime import datetime
+
+# Variável global para reutilizar a conexão
+conexao = None
+
+def obtemConexao(servidor, usuario, senha, bd):
+    global conexao
+    if conexao is None:
+        conexao = mysql.connector.connect(
+            host=BD-ACD,
+            user=BD240225249,
+            password=Jjzly3,
+            database=BD240225249
+        )
+    return conexao
+
+def fechaConexao():
+    global conexao
+    if conexao:
+        conexao.close()
+        conexao = None
+
+def insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte):
+    comando = """
+        INSERT INTO registros
+        (nome, data, litros_agua, kwh_energia, kg_residuos, porcentagem_reciclada, transporte)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    valores = (nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
+    conexao = obtemConexao("localhost", "BD240225249", "Jjzly3", "BD240225249")
+    cursor = conexao.cursor()
+    cursor.execute(comando, valores)
+    conexao.commit()
+    cursor.close()
+
+#---------------------------------------------------------------------------------------
+
 print("PROGRAMA PARA CALCULAR SUSTENTABILIDADE PESSOAL")
 
-digitou_corretamente=False
-while not digitou_corretamente:
-    try:       #QUAL O DIA
-        dia=int(input("Digite o dia atual: "))
-    except ValueError:
-        print("A data deve ser numérica! Tente novamente.")   
-    else:
-        if dia<1 or dia>31:
-            print("Você deve selecionar entre os dias de 1 a 31, tente novamente.")
-        else: 
-            digitou_corretamente=True    
+#Solicita nome do usuário
+nome=input("Digite o seu nome: ")
 
+from datetime import datetime
 digitou_corretamente=False
 while not digitou_corretamente:
-    try:    # QUAL O MÊS
-        mes=int(input("Digite o mês atual: "))
-    except ValueError:
-        print("A data deve ser numérica! Tente novamente.")   
-    else:
-        if mes<1 or mes>12:
-            print("Você deve selecionar entre os mêses de 1 a 12, tente novamente.")
-        else: 
-            digitou_corretamente=True
+    # Solicita a data ao usuário
+    data_usuario = input("Digite a data atual (no formato dd/mm/aaaa): ")
 
-digitou_corretamente=False
-while not digitou_corretamente:
-    try:    # QUAL O ANO
-        ano=int(input("Digite o ano atual: "))
+    # Tenta converter a entrada para o formato correto
+    try:
+        # Verifica se a data está no formato correto
+        data_formatada = datetime.strptime(data_usuario, "%d/%m/%Y").strftime("%d/%m/%Y")
+        print("Data formatada:", data_formatada)
+        break  # Sai do laço se a data for válida
     except ValueError:
-        print("A data deve ser numérica! Tente novamente.")   
-    else:
-        if ano<2025:
-            print("Você deve selecionar a partir do ano de 2025! Tente novamente.")
-        else: 
-            digitou_corretamente=True   
+        # Se o formato estiver errado, avisa o usuário e pede novamente
+        print("Formato de data inválido! Por favor, use o formato dd/mm/aaaa.")
+    else: 
+            digitou_corretamente=True     
 
 digitou_corretamente=False
 while not digitou_corretamente:
     try:    # LITROS DE ÁGUA
-        L_de_agua=float(input("Quantos litros de água foram consumidos hoje? "))
+        L_de_agua=float(input("Quantos litros de água foram consumidos hoje? ").replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente!")
     else:
@@ -51,7 +74,7 @@ while not digitou_corretamente:
 digitou_corretamente=False
 while not digitou_corretamente:
     try:    # ENERGIA ELÉTRICA
-        kwh=float(input("Quanto kWh de energia elétrica você consumiu hoje?"))
+        kwh=float(input("Quanto kWh de energia elétrica você consumiu hoje?").replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente.")
     else:
@@ -63,7 +86,7 @@ while not digitou_corretamente:
 digitou_corretamente=False
 while not digitou_corretamente:
     try:      # KG DE RESÍDUOS
-        kg_de_residuos=float(input("Quantos kg de resíduos não recicláveis você gerou hoje?"))
+        kg_de_residuos=float(input("Quantos kg de resíduos não recicláveis você gerou hoje?").replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente!")
     else:
@@ -75,7 +98,7 @@ while not digitou_corretamente:
 digitou_corretamente=False
 while not digitou_corretamente:
     try:      #  % DE RESIDUOS
-        porcentagem_de_residuos=float(input("Qual a porcentagem de resíduos reciclados no total?" ))
+        porcentagem_de_residuos=float(input("Qual a porcentagem de resíduos reciclados no total?" ).replace(",", "."))
     except ValueError:
         print("O valor deve ser numérico! Tente novamente!")
     else:
@@ -145,4 +168,33 @@ elif transporte==6:
 else:
     print("A sua opção de transporte resultou em: 🔴 Baixa Sustentabilidade 🔴")
 
-print("PROGRAMA ENCERRADO!")
+#--------------------------------------------------------------------------------
+
+while True:
+    print("\n----------------------------------------------")
+    print("|                   Menu                     |")
+    print("----------------------------------------------")
+    print("|  1 - Atualizar monitoramento               |")
+    print("|  2 - Visualizar um monitoramento existente |")
+    print("|  3 - Sair                                  |")
+    print("----------------------------------------------")
+
+    escolha = input("Digite a opção (1/2/3): ")
+
+    if escolha == "1":
+        insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
+        print("Registro atualizado com sucesso!")
+    elif escolha == "2":
+        resultado = selecao_de_registro(data_formatada)
+        if resultado:
+            for linha in resultado:
+                print(linha)
+        else:
+            print("Nenhum registro encontrado para essa data.")
+    elif escolha == "3":
+        print("Programa encerrado.")
+        break
+    else:
+        print("Opção inválida. Tente novamente.")
+
+fechaConexao()
