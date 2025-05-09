@@ -34,6 +34,18 @@ def insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porc
     conexao.commit()
     cursor.close()
 
+def visualizar_registros_por_data(data_formatada):
+    comando = """
+        SELECT nome, data, litros_agua, kwh_energia, kg_residuos, porcentagem_reciclada, transporte
+        FROM registros
+        WHERE data = %s
+    """
+    conexao = obtemConexao("172.16.12.14", "BD240225249", "Jjzly3", "BD240225249")
+    cursor = conexao.cursor()
+    cursor.execute(comando, (data_formatada,))
+    resultados = cursor.fetchall()
+    cursor.close()
+    return resultados
 #---------------------------------------------------------------------------------------
 
 print("PROGRAMA PARA CALCULAR SUSTENTABILIDADE PESSOAL")
@@ -185,10 +197,11 @@ while True:
         insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
         print("Registro atualizado com sucesso!")
     elif escolha == "2":
-        resultado = insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
-        if resultado:
-            for linha in resultado:
-                print(linha)
+        registros = visualizar_registros_por_data(data_formatada)
+        if registros:
+            print("\nRegistros encontrados para a data", data_formatada)
+            for registro in registros:
+                print(f"Nome: {registro[0]}, Data: {registro[1]}, Água: {registro[2]}L, Energia: {registro[3]}kWh, Resíduos: {registro[4]}kg, % Reciclado: {registro[5]}%, Transporte: {registro[6]}")
         else:
             print("Nenhum registro encontrado para essa data.")
     elif escolha == "3":
