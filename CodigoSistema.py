@@ -45,17 +45,17 @@ from datetime import datetime
 digitou_corretamente=False
 while not digitou_corretamente:
     # Solicita a data ao usuário
-    data_usuario = input("Digite a data atual (no formato dd/mm/aaaa): ")
+    data_usuario = input("Digite a data atual (no formato aaaa/mm/dd): ")
 
     # Tenta converter a entrada para o formato correto
     try:
         # Verifica se a data está no formato correto
-        data_formatada = datetime.strptime(data_usuario, "%d/%m/%Y").strftime("%d/%m/%Y")
+        data_formatada = datetime.strptime(data_usuario, "%Y/%m/%d").strftime("%Y/%m/%d")
         print("Data formatada:", data_formatada)
         break  # Sai do laço se a data for válida
     except ValueError:
         # Se o formato estiver errado, avisa o usuário e pede novamente
-        print("Formato de data inválido! Por favor, use o formato dd/mm/aaaa.")
+        print("Formato de data inválido! Por favor, use o formato aaaa/mm/dd.")
     else: 
             digitou_corretamente=True     
 
@@ -185,7 +185,7 @@ while True:
         insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
         print("Registro atualizado com sucesso!")
     elif escolha == "2":
-        resultado = selecao_de_registro(data_formatada)
+        resultado = insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
         if resultado:
             for linha in resultado:
                 print(linha)
