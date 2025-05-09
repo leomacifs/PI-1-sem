@@ -8,10 +8,10 @@ def obtemConexao(servidor, usuario, senha, bd):
     global conexao
     if conexao is None:
         conexao = mysql.connector.connect(
-            host=BD-ACD,
-            user=BD240225249,
-            password=Jjzly3,
-            database=BD240225249
+            host=servidor,
+            user=usuario,
+            password=senha,
+            database=bd
         )
     return conexao
 
@@ -28,7 +28,7 @@ def insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porc
         VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
     valores = (nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
-    conexao = obtemConexao("localhost", "BD240225249", "Jjzly3", "BD240225249")
+    conexao = obtemConexao("172.16.12.14", "BD240225249", "Jjzly3", "BD240225249")
     cursor = conexao.cursor()
     cursor.execute(comando, valores)
     conexao.commit()
