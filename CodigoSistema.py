@@ -46,6 +46,31 @@ def visualizar_registros_por_data(data_formatada):
     resultados = cursor.fetchall()
     cursor.close()
     return resultados
+
+def atualizar_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte):
+    comando = """
+        UPDATE registros
+        SET litros_agua = %s,
+            kwh_energia = %s,
+            kg_residuos = %s,
+            porcentagem_reciclada = %s,
+            transporte = %s
+        WHERE nome = %s AND data = %s
+    """
+    valores = (L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte, nome, data_formatada)
+    conexao = obtemConexao("172.16.12.14", "BD240225249", "Jjzly3", "BD240225249")
+    cursor = conexao.cursor()
+    cursor.execute(comando, valores)
+    conexao.commit()
+    cursor.close()
+
+def excluir_registro(nome, data_formatada):
+    comando = "DELETE FROM registros WHERE nome = %s AND data = %s"
+    conexao = obtemConexao("172.16.12.14", "BD240225249", "Jjzly3", "BD240225249")
+    cursor = conexao.cursor()
+    cursor.execute(comando, (nome, data_formatada))
+    conexao.commit()
+    cursor.close()
 #---------------------------------------------------------------------------------------
 
 print("PROGRAMA PARA CALCULAR SUSTENTABILIDADE PESSOAL")
@@ -183,19 +208,22 @@ else:
 #--------------------------------------------------------------------------------
 
 while True:
-    print("\n----------------------------------------------")
+    print("----------------------------------------------")
     print("|                   Menu                     |")
     print("----------------------------------------------")
-    print("|  1 - Atualizar monitoramento               |")
+    print("|  1 - Inserir novo monitoramento            |")
     print("|  2 - Visualizar um monitoramento existente |")
-    print("|  3 - Sair                                  |")
+    print("|  3 - Atualizar um monitoramento existente  |")
+    print("|  4 - Excluir um monitoramento              |")
+    print("|  5 - Sair                                  |")
     print("----------------------------------------------")
 
     escolha = input("Digite a opção (1/2/3): ")
 
     if escolha == "1":
         insercao_registro(nome, data_formatada, L_de_agua, kwh, kg_de_residuos, porcentagem_de_residuos, transporte)
-        print("Registro atualizado com sucesso!")
+        print("Registro inserido com sucesso!")
+
     elif escolha == "2":
         registros = visualizar_registros_por_data(data_formatada)
         if registros:
@@ -204,10 +232,53 @@ while True:
                 print(f"Nome: {registro[0]}, Data: {registro[1]}, Água: {registro[2]}L, Energia: {registro[3]}kWh, Resíduos: {registro[4]}kg, % Reciclado: {registro[5]}%, Transporte: {registro[6]}")
         else:
             print("Nenhum registro encontrado para essa data.")
+
     elif escolha == "3":
+        registros = visualizar_registros_por_data(data_formatada)
+        registro_existente = None
+        for r in registros:
+            if r[0] == nome:
+                registro_existente = r
+                break
+
+        if not registro_existente:
+            print("Nenhum registro encontrado para esse nome e data.")
+        else:
+            print("\nRegistro atual:")
+            print(f"Nome: {registro_existente[0]}")
+            print(f"Data: {registro_existente[1]}")
+            print(f"Água: {registro_existente[2]}L")
+            print(f"Energia: {registro_existente[3]}kWh")
+            print(f"Resíduos: {registro_existente[4]}kg")
+            print(f"% Reciclado: {registro_existente[5]}%")
+            print(f"Transporte: {registro_existente[6]}")
+
+            def atualizar_campo(texto, valor_antigo, tipo=float):
+                entrada = input(f"{texto} [{valor_antigo}]: ").strip()
+                if entrada == "":
+                    return valor_antigo
+                else:
+                    try:
+                        return tipo(entrada.replace(",", ".")) if tipo == float else tipo(entrada)
+                    except ValueError:
+                        print("Entrada inválida! Mantendo valor antigo.")
+                        return valor_antigo
+
+            novo_L_de_agua = atualizar_campo("Novo consumo de água (L)", registro_existente[2])
+            novo_kwh = atualizar_campo("Novo consumo de energia (kWh)", registro_existente[3])
+            novo_residuos = atualizar_campo("Novo total de resíduos (kg)", registro_existente[4])
+            nova_porcentagem = atualizar_campo("Nova % de resíduos reciclados", registro_existente[5])
+            novo_transporte = atualizar_campo("Novo meio de transporte (1-7)", registro_existente[6], int)
+
+            atualizar_registro(nome, data_formatada, novo_L_de_agua, novo_kwh, novo_residuos, nova_porcentagem, novo_transporte)
+            print("Registro atualizado com sucesso!")
+
+    elif escolha == "4":
+        excluir_registro(nome, data_formatada)
+        print("Registro excluído com sucesso!")
+
+    elif escolha == "5":
         print("Programa encerrado.")
         break
-    else:
-        print("Opção inválida. Tente novamente.")
 
 fechaConexao()
